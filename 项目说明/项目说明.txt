@@ -1,0 +1,80 @@
+
+因为第三方的项目有问题 有几处修改 ：
+用本文件夹下的 index.js 替换 node_modules/react-native-camera/index.js
+用本文件夹下的 QRScanner.js 替换 node_modules/ac-qrcode/QRScanner.js
+
+在Wepay/node_modules/native-echarts/src/components/Echarts/index.js
+修改：
+scalesPageToFit={Platform.OS==="ios"?false:true}
+source={Platform.OS==="ios"?require('./tpl.html'):{uri:"file:///android_asset/tpl.html"}}
+
+用一个命令来代替
+
+cp 项目说明/QRScanner.js node_modules/ac-qrcode/
+cp 项目说明/index.js node_modules/react-native-camera/index.js
+cp 项目说明/折线图/index.js node_modules/native-echarts/src/components/Echarts/
+
+
+
+
+
+
+
+
+IOS 打包
+此条命令是打包RN的文件到bundle的文件 
+                                                 (目标文件)           （启动文件）  
+"node node_modules/react-native/local-cli/cli.js bundle --entry-file index.js --platform ios --dev false --bundle-output ./ios/bundle/index.ios.jsbundle --assets-dest ./ios/bundle",
+
+Android打包
+先清空缓存 再执行打包文件 
+cd android && ./gradlew clean && ./gradlew assembleRelease
+
+//运行打包后app 安装到手机 安装release版app 必须打包后才能执行 
+react-native run-android --variant=release
+
+
+
+
+
+
+
+
+
+
+
+热更新发布 Wepay-IOS Wepay-Android  (忘记当时注册填了什么)
+
+code-push login 登陆
+code-push loout 注销
+code-push access-key ls 列出登陆的token
+code-push access-key rm <accessKye> 删除某个 access-key
+
+在CodePush服务器注册app
+为了让CodePush服务器知道你的app，我们需要向它注册app： 在终端输入code-push app add <appName>即可完成注册。
+
+心得：如果你的应用分为Android和iOS版，那么在向CodePush注册应用的时候需要注册两个App获取两套deployment key，如：
+code-push app add MyApp-Android
+code-push app add MyApp-iOS
+
+
+code-push app add 在账号里面添加一个新的app
+code-push app remove 或者 rm 在账号里移除一个app
+code-push app rename 重命名一个存在app
+code-push app list 或则 ls 列出账号下面的所有app
+code-push app transfer 把app的所有权转移到另外一个账号
+
+code-push deployment -k ls <appName>  获取 部署秘钥
+如： code-push deployment  ls  -k  Wepay-IOS 
+                                                                                 Production Staging                 
+                        （codepush上项目名称） （更新平台）     （版本号）           （环境，分为测试，和发布）       （更新说明）   (是否强制更新)
+code-push release-react     Wepay-IOS           ios       --t 1.2.4 --dev false --d Production             --des "更新说明" --m true
+code-push release-react     Wepay-Android     android     --t 1.2.4 --dev false --d Production             --des "更新说明" --m true
+
+关于code-push release-react更多可选的参数，可以在终端输入code-push release-react进行查看。
+我们可以通过code-push deployment ls <appName>来查看发布详情与此次更新的安装情况
+如： code-push deployment ls Wepay-IOS
+
+
+回滚指定版本 v21 代表 label
+code-push rollback Wepay-IOS Production --targetRelease v21

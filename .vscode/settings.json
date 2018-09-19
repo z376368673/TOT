@@ -1,0 +1,10 @@
+{
+    "javascript.implicitProjectConfig.experimentalDecorators": true,
+     // 以像素为单位控制字号。
+    "editor.fontSize": 14,
+    "files.autoSave": "onFocusChange",
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "search.followSymlinks": false,
+     //解决复制文件出现路径变成绝对路径问题
+    "javascript.updateImportsOnFileMove.enabled": "never"
+}
